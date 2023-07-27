@@ -47,8 +47,8 @@ public abstract class Analysis {
 		}
 		long time = dr.getLastSampleBtime().convertToCalendar().getTimeInMillis();
 		if (time < lastRecord) {
-			System.err.println(
-					"ERROR: BACKWARDS TIME AT " + getStation().getStationCode() + " (" + (lastRecord - time) + ")");
+			// System.err.println(
+			// 		"ERROR: BACKWARDS TIME AT " + getStation().getStationCode() + " (" + (lastRecord - time) + ")");
 		} else {
 			decode(dr);
 			lastRecord = time;

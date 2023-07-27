@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.json.JSONObject;
+
 public class Network implements Serializable {
 	private static final long serialVersionUID = 1897310675831889693L;
 	private String networkCode;
@@ -26,6 +28,13 @@ public class Network implements Serializable {
 		Station stat = new Station(stationCode, stationSite, lat, lon, alt);
 		stations.add(stat);
 		return stat;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		json.put("networkCode", networkCode);
+		json.put("description", description);
+		return json;
 	}
 
 	public String getNetworkCode() {

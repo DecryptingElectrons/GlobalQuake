@@ -3,6 +3,7 @@ package globalquake.res.sounds;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 import globalquake.res.sounds.countdown.Countdown;
 import globalquake.res.sounds.levels.Levels;
@@ -106,6 +107,8 @@ public class Sounds {
 			return;
 		}
 		if (soundsEnabled && clip != null) {
+			FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			gainControl.setValue(5);
 			clip.setFramePosition(0);
 			clip.start();
 		}

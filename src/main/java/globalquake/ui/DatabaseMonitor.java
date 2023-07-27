@@ -24,6 +24,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.json.JSONObject;
+
 import com.morce.globalquake.database.Channel;
 import com.morce.globalquake.database.Network;
 import com.morce.globalquake.database.Station;
@@ -59,7 +61,7 @@ public class DatabaseMonitor extends JFrame {
 		this.stationManager = stationManager;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		contentPane = new JPanel();
-		contentPane.setPreferredSize(new Dimension(460, 330));
+		contentPane.setPreferredSize(new Dimension(460, 360));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -196,6 +198,23 @@ public class DatabaseMonitor extends JFrame {
 						};
 					}.start();
 				}
+			}
+		});
+
+
+		JButton debug_json = new JButton("Debug JSON OUT");
+		debug_json.setBounds(10, 320, 210, 32);
+		contentPane.add(debug_json);
+
+		debug_json.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Keep calm, and debug JSON out");
+
+				JSONObject json = new JSONObject();
+				json=stationManager.get_DB_as_JSON();
+				System.out.println(json.toString(2));
 			}
 		});
 

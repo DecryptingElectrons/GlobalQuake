@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
@@ -38,6 +39,10 @@ import com.morce.globalquake.database.StationDatabase;
 
 import edu.sc.seis.seisFile.seedlink.SeedlinkReader;
 import globalquake.utils.TimeFixer;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 public class StationManager implements IStationManager {
 
@@ -104,6 +109,23 @@ public class StationManager implements IStationManager {
 
 	public int getState() {
 		return state;
+	}
+
+	public JSONObject get_DB_as_JSON()
+	{
+		JSONObject json = new JSONObject();
+		StationDatabase db = getDatabase();
+		JSONArray networks = new JSONArray();
+
+
+		for (Network network : db.getNetworks())
+		{
+			networks.put(network.toJSON());
+		}
+
+		json.put("networks", networks);
+		
+		return json;
 	}
 
 	private void load() {
@@ -468,7 +490,18 @@ public class StationManager implements IStationManager {
 
 	private void parseStations(DataSource se, StationDatabase database, Element root, Calendar now) {
 		NodeList networks = root.getElementsByTagName("Network");
-		for (int i = 0; i < networks.getLength(); i++) {
+
+
+		//create a way to randomly select a network
+		ArrayList<Integer> networkList = new ArrayList<Integer>();
+		for(int i = 0; i < networks.getLength(); i++) {
+			networkList.add(i);
+		}
+		Collections.shuffle(networkList);
+		
+
+		for (int x = 0; x < networks.getLength(); x++) {
+			int i = networkList.get(x); //iterates through the networks in a random order
 			try {
 				String networkCode = obtainAttribute(networks.item(i), "code", "unknown");
 				if (networkCode.equalsIgnoreCase("unknown")) {
@@ -554,7 +587,31 @@ public class StationManager implements IStationManager {
 							continue;
 						}
 					}
+
+					//still on one station and have now peocessed all channels
+
+					Network net = database.getNetwork(networkCode);
+					if (net == null) {
+						continue;
+					}
+					Station stat = net.getStation(stationCode);
+					if (stat == null) {
+						continue;
+					}
+
+					stat.setSelectedChannel(0);
+					Channel c_zero = stat.getChannels().get(0);
+					if (c_zero == null) {
+						continue;
+					}
+					c_zero.setSelected(true);
+
+
+					database.getSelectedStations().add(new SelectedStation(networkCode,
+							stat.getStationCode(), c_zero.getName(), c_zero.getLocationCode()));
 				}
+
+				
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -567,6 +624,17 @@ public class StationManager implements IStationManager {
 			String stationCode, String stationSite, String channel, String locationCode, double lat, double lon,
 			double alt, long sensitivity, double frequency, double sampleRate, String inputUnits, String startDate,
 			String endDate, Calendar now) {
+
+		/*
+		 * This is run for every channel
+		 * This is run when updateDatabase is called
+		 * 
+		 * The updateDatabase methoddownloads data from various servers
+		 * 
+		 * This method actually adds to the database (a java serializable object/file)
+		 * 
+		 * updateDatabase will also save the database to a file when it is done
+		 */
 		Calendar start = Calendar.getInstance();
 		try {
 			start.setTime(format1.parse(startDate));

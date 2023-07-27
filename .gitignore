@@ -41,6 +41,9 @@ hs_err_pid*
 
 #Other
 idea.png
-GlobalQuake/
+/GlobalQuake/
 old/
 science/
+
+
+.VsCodeCounter/
