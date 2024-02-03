@@ -131,14 +131,14 @@ public class DataService extends GlobalQuakeEventListener {
                 if (previous == null || !previous.equals(status)) {
                     data.add(new StationIntensityData(abstractStation.getId(), status.intensity(), status.eventMode()));
                     if (data.size() >= STATIONS_INFO_PACKET_MAX_SIZE) {
-                        broadcast(getStationReceivingClients(), new StationsIntensityPacket(GlobalQuake.instance.getStationManager().getIndexing(), System.currentTimeMillis(), data));
+                        broadcast(getStationReceivingClients(), new StationsIntensityPacket(GlobalQuake.instance.getStationManager().getIndexing(), GlobalQuake.instance.currentTimeMillis(), data));
                         data = new ArrayList<>();
                     }
                 }
             }
 
             if (!data.isEmpty()) {
-                broadcast(getStationReceivingClients(), new StationsIntensityPacket(GlobalQuake.instance.getStationManager().getIndexing(), System.currentTimeMillis(), data));
+                broadcast(getStationReceivingClients(), new StationsIntensityPacket(GlobalQuake.instance.getStationManager().getIndexing(), GlobalQuake.instance.currentTimeMillis(), data));
             }
         } catch(Exception e){
             Logger.tag("Server").error(e);
@@ -238,7 +238,8 @@ public class DataService extends GlobalQuakeEventListener {
                 (float) archivedQuake.getDepth(),
                 (float) archivedQuake.getMag(),
                 archivedQuake.getOrigin(),
-                (byte) archivedQuake.getQualityClass().ordinal()), createArchivedEventsData(archivedQuake.getArchivedEvents()));
+                (byte) archivedQuake.getQualityClass().ordinal(),
+                (long) archivedQuake.getFinalUpdateMillis()), createArchivedEventsData(archivedQuake.getArchivedEvents()));
     }
 
     private List<ArchivedEventData> createArchivedEventsData(ArrayList<ArchivedEvent> archivedEvents) {
@@ -325,7 +326,7 @@ public class DataService extends GlobalQuakeEventListener {
     private static HypocenterData createHypocenterData(Earthquake earthquake) {
         return new HypocenterData(
                 earthquake.getUuid(), earthquake.getRevisionID(), (float) earthquake.getLat(), (float) earthquake.getLon(),
-                (float) earthquake.getDepth(), earthquake.getOrigin(), (float) earthquake.getMag());
+                (float) earthquake.getDepth(), earthquake.getOrigin(), (float) earthquake.getMag(), earthquake.getLastUpdate(), earthquake.getRegion());
     }
 
     private void broadcast(List<ServerClient> clients, Packet packet) {
@@ -426,7 +427,7 @@ public class DataService extends GlobalQuakeEventListener {
                                 station.getStationCode(),
                                 station.getChannelName(),
                                 station.getLocationCode(),
-                                System.currentTimeMillis(),
+                                GlobalQuake.instance.currentTimeMillis(),
                                 (float) station.getMaxRatio60S(),
                                 station.isInEventMode(),
                                 station.getInputType()
