@@ -12,6 +12,7 @@ import globalquake.core.regions.Regions;
 import globalquake.core.geo.taup.TauPTravelTimeCalculator;
 
 import gqserver.FDSNWSEventsHTTPServer.FdsnwsEventsHTTPServer;
+import gqserver.websocketserver.EventWebSocketServer;
 
 import globalquake.utils.Scale;
 import gqserver.server.GlobalQuakeServer;
@@ -188,6 +189,9 @@ public class Main {
         if(Settings.autoStartFDSNWSEventServer){
             FdsnwsEventsHTTPServer.getInstance().startServer();
         }
+
+        EventWebSocketServer.getInstance().init();
+        EventWebSocketServer.getInstance().start();
     }
 
     private static void autoStartServer() {
