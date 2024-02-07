@@ -139,7 +139,7 @@ public class Main {
         }
     }
 
-    private static final double PHASES = 7.0;
+    private static final double PHASES = 8.0;
     private static int phase = 0;
 
     public static void initAll() throws Exception{
@@ -190,8 +190,12 @@ public class Main {
             FdsnwsEventsHTTPServer.getInstance().startServer();
         }
 
-        EventWebSocketServer.getInstance().init();
-        EventWebSocketServer.getInstance().start();
+        //Start the WebSocket Server, if enabled
+        updateProgressBar("Starting WebSocket Server...", (int) ((phase++ / PHASES) * 100.0));
+        if(Settings.enableRTWSEventServer){
+            EventWebSocketServer.getInstance().init();
+            EventWebSocketServer.getInstance().start();
+        }
     }
 
     private static void autoStartServer() {

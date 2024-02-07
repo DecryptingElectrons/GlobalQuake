@@ -8,23 +8,24 @@ import globalquake.core.events.specific.QuakeCreateEvent;
 import globalquake.core.events.specific.QuakeRemoveEvent;
 import globalquake.core.events.specific.QuakeUpdateEvent;
 
+import globalquake.core.Settings;
+
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
+
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import org.json.JSONObject;
-import org.json.JSONArray;
+
+import org.tinylog.Logger;
 
 public class EventWebSocketServer extends WebSocketServer {
-    private static InetSocketAddress address = new InetSocketAddress("0.0.0.0", 8887);
+    private static InetSocketAddress address = new InetSocketAddress(Settings.RTWSEventIP, Settings.RTWSEventPort);
 
     private static EventWebSocketServer instance = new EventWebSocketServer();
-
-    
 
 	private EventWebSocketServer() {
         super(address);
@@ -67,7 +68,6 @@ public class EventWebSocketServer extends WebSocketServer {
     }
 
     private void broadcastQuake(String action, ArchivedQuake quake) {
-        System.out.println("BROADCASTING " + action + " " + quake.getGeoJSON().toString());
         JSONObject json = new JSONObject();
         json.put("action", action);
         json.put("data", quake.getGeoJSON());
@@ -76,13 +76,13 @@ public class EventWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		System.out.println("new connection from " + conn.getRemoteSocketAddress());
+        Logger.info("RTWS: New connection from {}", conn.getRemoteSocketAddress());
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-		System.out.println("closed " + conn.getRemoteSocketAddress() + " with exit code " + code + " additional info: " + reason);
-	}
+        Logger.info("RTWS: Connection closed {}", conn.getRemoteSocketAddress());
+    }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
@@ -96,17 +96,11 @@ public class EventWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onError(WebSocket conn, Exception ex) {
-		System.err.println("an error occurred on connection " + conn.getRemoteSocketAddress()  + ":" + ex);
+        Logger.error("RTWS: An error occurred on connection {}: {}", conn.getRemoteSocketAddress(), ex);
 	}
 	
 	@Override
 	public void onStart() {
-		System.out.println("server started successfully");
+        Logger.info("RTWS: Server started on {}", address);
 	}
-
-
-	public static void main(String[] args) {
-        EventWebSocketServer s = EventWebSocketServer.getInstance();
-        System.out.println("thread test Server started at " + s.getAddress());
-    }
 }
