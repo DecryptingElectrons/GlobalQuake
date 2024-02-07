@@ -31,7 +31,14 @@ public class EventWebSocketServer extends WebSocketServer {
     }
     
     public void init() {
+        //This is an init because it should only be called if the module is intended to be used. Otherwise, it will be a waste of resources.
         this.initEventListeners();
+    }
+
+    private static ArchivedQuake convertToArchivedQuake(Earthquake quake) {
+        ArchivedQuake archivedQuake = new ArchivedQuake(quake);
+        archivedQuake.setRegion(quake.getRegion());
+        return archivedQuake;
     }
 
     private void initEventListeners() {
@@ -39,16 +46,17 @@ public class EventWebSocketServer extends WebSocketServer {
         {
             @Override
             public void onQuakeCreate(QuakeCreateEvent event) {
-                ArchivedQuake quake = new ArchivedQuake(event.earthquake());
-                quake.setRegion(event.earthquake().getRegion());
-                sendQuakeCreate(quake);
+                broadcastQuake("create", convertToArchivedQuake(event.earthquake()));
             }
 
             @Override
             public void onQuakeUpdate(QuakeUpdateEvent event) {
-                ArchivedQuake quake = new ArchivedQuake(event.earthquake());
-                quake.setRegion(event.earthquake().getRegion());
-                sendQuakeUpdate(quake);
+                broadcastQuake("update", convertToArchivedQuake(event.earthquake()));
+            }
+
+            @Override
+            public void onQuakeRemove(QuakeRemoveEvent event) {
+                broadcastQuake("remove", convertToArchivedQuake(event.earthquake()));
             }
         });
 
@@ -58,16 +66,10 @@ public class EventWebSocketServer extends WebSocketServer {
         return instance;
     }
 
-    private void sendQuakeCreate(ArchivedQuake quake) {
+    private void broadcastQuake(String action, ArchivedQuake quake) {
+        System.out.println("BROADCASTING " + action + " " + quake.getGeoJSON().toString());
         JSONObject json = new JSONObject();
-        json.put("action", "create");
-        json.put("data", quake.getGeoJSON());
-        this.broadcast(json.toString());
-    }
-
-    private void sendQuakeUpdate(ArchivedQuake quake) {
-        JSONObject json = new JSONObject();
-        json.put("action", "update");
+        json.put("action", action);
         json.put("data", quake.getGeoJSON());
         this.broadcast(json.toString());
     }
