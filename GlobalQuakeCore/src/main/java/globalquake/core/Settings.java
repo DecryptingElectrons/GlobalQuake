@@ -213,7 +213,7 @@ public final class Settings {
 
         loadProperty("RTWSEventIP", "localhost"); //As a default, localhost is used for security.
         loadProperty("RTWSEventPort", "8081");
-        loadProperty("enableRTWSEventServer", "false"); //As a default, localhost is used for security.
+        loadProperty("enableRTWSEventServer", "false");
 
         loadProperty("shakingLevelScale", "0",
                 o -> validateInt(0, IntensityScales.INTENSITY_SCALES.length - 1, (Integer) o));
