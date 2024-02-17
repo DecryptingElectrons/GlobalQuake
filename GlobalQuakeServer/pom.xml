@@ -104,6 +104,13 @@
             <version>2.5.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.uber/h3 -->
+
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.5.4</version>
+          </dependency>
+        
         <dependency>
             <groupId>xspanger.GlobalQuake</groupId>
             <artifactId>GlobalQuakeAPI</artifactId>
