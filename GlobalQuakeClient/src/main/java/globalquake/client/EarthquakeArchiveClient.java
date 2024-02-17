@@ -25,8 +25,9 @@ public class EarthquakeArchiveClient extends EarthquakeArchive {
 
     private ArchivedQuake createArchivedQuake(ArchivedQuakePacket quakePacket) {
         ArchivedQuakeData data = quakePacket.archivedQuakeData();
+        Long dummyFirstUpdateMillis = data.origin() + 100; //The client does not receive this data, in order to satisfy the constructor, a dummy value is used. Event origin time + 100ms
         ArchivedQuake archivedQuake = new ArchivedQuake(
-                data.uuid(), data.lat(), data.lon(), data.depth(), data.magnitude(), data.origin(), QualityClass.values()[data.qualityID()], data.finalUpdateMillis()
+                data.uuid(), data.lat(), data.lon(), data.depth(), data.magnitude(), data.origin(), QualityClass.values()[data.qualityID()], data.finalUpdateMillis(), dummyFirstUpdateMillis
         );
 
         quakePacket.archivedEventDataList().forEach(archivedEventData -> archivedQuake.getArchivedEvents().add(new ArchivedEvent(

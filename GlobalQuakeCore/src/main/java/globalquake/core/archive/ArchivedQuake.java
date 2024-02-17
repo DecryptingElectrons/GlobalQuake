@@ -44,6 +44,7 @@ public class ArchivedQuake implements Serializable, Comparable<ArchivedQuake>, R
 	private double maxPGA;
 	private String region;
     private final long finalUpdateMillis;
+    private final Long firstUpdateMillis;
 
 	private final ArrayList<ArchivedEvent> archivedEvents;
 
@@ -63,7 +64,7 @@ public class ArchivedQuake implements Serializable, Comparable<ArchivedQuake>, R
 		this(earthquake.getUuid(), earthquake.getLat(), earthquake.getLon(), earthquake.getDepth(), earthquake.getMag(),
 				earthquake.getOrigin(),
 				earthquake.getHypocenter() == null || earthquake.getHypocenter().quality == null ? null :
-						earthquake.getHypocenter().quality.getSummary(), earthquake.getLastUpdate());
+						earthquake.getHypocenter().quality.getSummary(), earthquake.getLastUpdate(), earthquake.getCreatedAt());
 		copyEvents(earthquake);
 	}
 
@@ -92,7 +93,7 @@ public class ArchivedQuake implements Serializable, Comparable<ArchivedQuake>, R
 		}
 	}
 
-	public ArchivedQuake(UUID uuid, double lat, double lon, double depth, double mag, long origin, QualityClass qualityClass, long finalUpdateMillis) {
+	public ArchivedQuake(UUID uuid, double lat, double lon, double depth, double mag, long origin, QualityClass qualityClass, long finalUpdateMillis, Long firstUpdateMillis) {
 		this.uuid = uuid;
 		this.lat = lat;
 		this.lon = lon;
@@ -106,6 +107,7 @@ public class ArchivedQuake implements Serializable, Comparable<ArchivedQuake>, R
 
 		pgaService.submit(this::calculatePGA);
     	this.finalUpdateMillis = finalUpdateMillis;
+        this.firstUpdateMillis = firstUpdateMillis;
 	}
 
 	private void calculatePGA() {
@@ -198,11 +200,20 @@ public class ArchivedQuake implements Serializable, Comparable<ArchivedQuake>, R
   public long getFinalUpdateMillis() {
       return finalUpdateMillis;
   }
+  public Long getFirstUpdateMillis() {
+      return firstUpdateMillis;
+  }
   
   public String formattedUtcOrigin() {
       SimpleDateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
       utcFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
       return utcFormat.format(new Date(getOrigin()));
+  }
+
+  public String formattedUtcFirstUpdate() {
+      SimpleDateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+      utcFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      return utcFormat.format(new Date(getFirstUpdateMillis()));
   }
 
 
@@ -268,29 +279,41 @@ public class ArchivedQuake implements Serializable, Comparable<ArchivedQuake>, R
 
     public String getQuakeML() {
         String quakeml = "<event publicID=\"quakeml:GlobalQuake:"+getUuid().toString()+"\">";
+
+        //this.
+
+        quakeml += "<creationInfo>";
+            quakeml += "<creationTime>"+formattedUtcFirstUpdate()+"</creationTime>";
         quakeml += "<description>";
-        quakeml += "<type>Flinn-Engdahl region</type>";
-        quakeml += "<text>"+getRegion()+"</text>";
+            quakeml += "<type>Flinn-Engdahl region</type>";
+            quakeml += "<text>"+getRegion()+"</text>";
         quakeml += "</description>";
+
         quakeml += "<origin>";
-        quakeml += "<time>";
-        quakeml += "<value>"+formattedUtcOrigin()+"</value>";
-        quakeml += "</time>";
-        quakeml += "<latitude>";
-        quakeml += "<value>"+getLat()+"</value>";
-        quakeml += "</latitude>";
-        quakeml += "<longitude>";
-        quakeml += "<value>"+getLon()+"</value>";
-        quakeml += "</longitude>";
-        quakeml += "<depth>";
-        quakeml += "<value>"+getDepth()+"</value>";
-        quakeml += "</depth>";
+            quakeml += "<time>";
+                quakeml += "<value>"+formattedUtcOrigin()+"</value>";
+            quakeml += "</time>";
+
+            quakeml += "<latitude>";
+                quakeml += "<value>"+getLat()+"</value>";
+            quakeml += "</latitude>";
+
+            quakeml += "<longitude>";
+                quakeml += "<value>"+getLon()+"</value>";
+            quakeml += "</longitude>";
+
+            quakeml += "<depth>";
+                quakeml += "<value>"+getDepth()+"</value>";
+            quakeml += "</depth>";
+
         quakeml += "</origin>";
+
         quakeml += "<magnitude>";
-        quakeml += "<mag>";
-        quakeml += "<value>"+getMag()+"</value>";
-        quakeml += "</mag>";
+            quakeml += "<mag>";
+                quakeml += "<value>"+getMag()+"</value>";
+            quakeml += "</mag>";
         quakeml += "</magnitude>";
+
         quakeml += "</event>\n";
         return quakeml;
       }

@@ -171,8 +171,13 @@ public class GlobePanelDebug extends GQFrame {
 		Random r = new Random();
 		Settings.oldEventsTimeFilterEnabled = false;
 		Settings.oldEventsMagnitudeFilterEnabled = false;
+
+        Long originTime = r.nextLong() % System.currentTimeMillis();
+        Long finalUpdateMillis = originTime + 100;
+        Long firstUpdateMillis = originTime + 50;
+
 		for(double mag = 0.5; mag <= 11; mag += 0.2) {
-			archivedQuakes.add(new ArchivedQuake(null, 0, 0, 0, mag, r.nextLong() % System.currentTimeMillis(), QualityClass.S, System.currentTimeMillis()+100)); //100ms added to make finalUpdateMillis > origin
+			archivedQuakes.add(new ArchivedQuake(null, 0, 0, 0, mag, originTime, QualityClass.S, finalUpdateMillis, firstUpdateMillis));
 		}
 		//archivedQuakes.sort(Comparator.comparing(ArchivedQuake::getOrigin));
 	}

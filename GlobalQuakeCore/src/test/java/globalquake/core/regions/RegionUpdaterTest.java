@@ -34,7 +34,7 @@ public class RegionUpdaterTest {
 
     @Test
     public void testArchivedEarthquakeRegion(){
-        ArchivedQuake archivedQuake = new ArchivedQuake(null, 50,17,0,0,0, QualityClass.S, 100);
+        ArchivedQuake archivedQuake = new ArchivedQuake(null, 50,17,0,0,0, QualityClass.S, 100L, 50L);
         assertNotNull(archivedQuake.getRegion());
     }
 
