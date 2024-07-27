@@ -9,8 +9,7 @@
   <a href="https://github.com/xspanger3770/GlobalQuake/releases"><img src="https://img.shields.io/github/release/xspanger3770/GlobalQuake.svg?style=for-the-badge&logo=github" alt="Release"></a> <a href="https://github.com/xspanger3770/GlobalQuake/releases"><img src="https://img.shields.io/github/downloads/xspanger3770/GlobalQuake/total?style=for-the-badge&logo=github" alt="Releases"></a> <a href="https://discord.gg/aCyuXfTyma"><img src="https://img.shields.io/badge/discord-Join Now-blue?logo=discord&style=for-the-badge" alt="Discord"></a>
 </p>
 
-![GlobalQuake_0.9.5](https://github.com/xspanger3770/GlobalQuake/assets/100421968/a2dc2ed7-9c28-47ab-aaa7-f76318d22a1e)
-
+![GlobalQuake v0.10.0](https://github.com/xspanger3770/GlobalQuake/assets/100421968/d38a0596-0242-4fe9-9766-67a486832364)
 
 <div style="display: grid; grid-template-columns: 1fr 1fr;">
 <img alt="StationManager" title="StationManager" src="https://github.com/xspanger3770/GlobalQuake/assets/100421968/a37319ec-2132-426a-b095-2e6a9e064322" style="width: 49%; height: auto;" />
@@ -23,7 +22,8 @@ GlobalQuake is an experimental Java application that can be used to monitor eart
 
 It enables selection of seismic stations downloaded from publicly available seismic networks via `fdsnws services` supllied by real time data from publicly available `seedlink servers`.\
 The program uses this data to detect earthquakes and visualize them on an interactive 3D globe.\
-It can also, estimate the earthquake magnitude using some empirical methods, but at the moment it can only work for small and medium size earthquakes, up to magnitude 5 or 6.
+It can also, estimate the earthquake magnitude using various numerical estimation methods, ~~but at the moment it can only work for small and medium size earthquakes, up to magnitude 5 or 6.~~
+that are capable of estimating the magnitude reasonably accurately for nearly any earthquake size (most accurate up to M8 though)
 
 > [!IMPORTANT]<br>
 > Please keep in mind that GlobalQuake is still very experimental and should only be used for entertainment purposes, as the displayed information can be inaccurate or completly wrong.\
@@ -49,12 +49,13 @@ It can also, estimate the earthquake magnitude using some empirical methods, but
 
 - The system requirements will scale by the number of stations you select. This includes RAM, CPU and network usage.
 - You can run GlobalQuake on slower system only to monitor earthquakes in your local area, or if your system can handle it, select hundreds or even thousands of stations around the world.
-- Roughly speaking, 4GB of RAM, 6 CPU cores and 5Mbit network connection should be enough to handle about 1000 stations.
+- Roughly speaking, ~~4GB of RAM~~, 6 CPU cores and 5Mbit network connection should be enough to handle about 1000 stations.
+- Update: beginning from version 0.11.0, only around 2GB of RAM is required for running 5000 stations.
 - If GlobalQuake starts lagging heavily or even crashes after a few minutes, it is probably due to insufficient RAM in your system, and you need to select fewer stations.
 
 ## Installing
 
-A guide for installing the application and the software needed for it can be found here: [Tutorials](https://github.com/xspanger3770/GlobalQuake/tree/main/tutorials)
+A guide for installing the application and the software needed for it can be found here: [Tutorials](https://github.com/xspanger3770/GlobalQuake/wiki/Downloads-And-Installation)
 
 ## Livestream
 
@@ -67,9 +68,9 @@ If you are considering to contribute to the project, make sure you have read the
 ## Project Licensing
 
 This project is released under the terms of the MIT License.\
-However, please note that this repository includes sound effects sourced from two other projects, each governed by their respective licenses.\
+~~However, please note that this repository includes sound effects sourced from two other projects, each governed by their respective licenses.\
 The sound effects with the [`LICENSE_J`](https://github.com/xspanger3770/GlobalQuake/blob/main/LICENSE_J) designation are used under the terms of their specific license - [JQuake](https://jquake.net/), and the sound effects with the [`LICENSE_K`](https://github.com/xspanger3770/GlobalQuake/blob/main/LICENSE_K) designation are also subject to their own unique license - [KiwiMonitor](https://kiwimonitor.amebaownd.com/).\
-It's important to review and adhere to these additional licenses when using or distributing this project. Refer to the corresponding license files for more details.
+It's important to review and adhere to these additional licenses when using or distributing this project. Refer to the corresponding license files for more details.~~
 
 ## Special thanks to
 
