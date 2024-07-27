@@ -58,9 +58,9 @@ public class GlobalQuakePanel extends GlobePanel {
 
     public static final DecimalFormat f4d = new DecimalFormat("0.0000", new DecimalFormatSymbols(Locale.ENGLISH));
 
-    private final CinemaHandler cinemaHandler;
-    private volatile Earthquake lastCinemaModeEarthquake;
-    private volatile long lastCinemaModeEvent;
+    private CinemaHandler cinemaHandler;
+    public volatile Earthquake lastCinemaModeEarthquake;
+    public volatile long lastCinemaModeEvent;
     private Earthquake lastDisplayedQuake;
 
     public GlobalQuakePanel(JFrame frame) {
@@ -84,7 +84,9 @@ public class GlobalQuakePanel extends GlobePanel {
                 }
             }
         });
+    }
 
+    public CinemaHandler initCinemaHandler(JFrame frame) {
         cinemaHandler = new CinemaHandler(this);
         cinemaHandler.run();
 
@@ -109,6 +111,7 @@ public class GlobalQuakePanel extends GlobePanel {
                 cinemaHandler.stop();
             }
         });
+        return cinemaHandler;
     }
 
     protected void addRenderFeatures() {

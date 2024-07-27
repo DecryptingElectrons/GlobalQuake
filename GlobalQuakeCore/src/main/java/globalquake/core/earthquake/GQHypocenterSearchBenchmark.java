@@ -3,9 +3,11 @@ package globalquake.core.earthquake;
 import globalquake.core.GlobalQuake;
 import globalquake.core.earthquake.data.HypocenterFinderSettings;
 import globalquake.core.earthquake.data.PickedEvent;
+import globalquake.core.exception.FatalApplicationException;
 import globalquake.core.geo.taup.TauPTravelTimeCalculator;
 import globalquake.jni.GQNativeFunctions;
 import globalquake.utils.GeoUtils;
+import org.tinylog.Logger;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,17 +23,34 @@ public class GQHypocenterSearchBenchmark {
         GQHypocenterSearchBenchmark.performanceMeasurement();
     }
 
+    static {
+        try {
+            TauPTravelTimeCalculator.init();
+        } catch (FatalApplicationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void performanceMeasurement() throws Exception {
-        TauPTravelTimeCalculator.init();
-
         double sum = 0;
+        int c = 0;
 
-        for (int i = 0; i < 5; i++) {
-            sum += runStandardTest();
+        for(OriginMethod originMethod : OriginMethod.values()) {
+            EarthquakeAnalysis.ORIGIN_METHOD = originMethod;
+            Logger.info("Running test with origin method %s".formatted(originMethod));
+            for (int i = 0; i < 3; i++) {
+                sum += runStandardTest() * 1500.0; // 0.5km depth step
+                c++;
+            }
+            System.out.printf("Average: %.2f hypocenters/s%n", sum / c);
+            sum = 0;
+            c = 0;
         }
 
-        System.out.printf("Average: %.2f%n", sum / 5.0);
 
+    }
+
+    public static void asymptoticAnalysis() throws Exception{
         // CPU
         GQHypocenterSearchBenchmark.plotTimeVsPoints(false);
         GQHypocenterSearchBenchmark.plotTimeVsStations(false);
@@ -51,8 +70,6 @@ public class GQHypocenterSearchBenchmark {
 
         GQHypocenterSearchBenchmark.plotTimeVsPoints(true);
         GQHypocenterSearchBenchmark.plotTimeVsStations(true);
-
-        System.exit(0);
     }
 
     private static double runStandardTest() {
